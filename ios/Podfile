@@ -44,4 +44,15 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
   end
+
+  # Configure permission_handler iOS permissions (only enable what's used)
+  installer.pods_project.targets.each do |target|
+    next unless target.name == 'permission_handler_apple'
+    target.build_configurations.each do |config|
+      # Enable location when in use; others remain disabled by default
+      flags = 'PERMISSION_LOCATION=1 PERMISSION_LOCATION_WHEN_IN_USE=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << flags
+    end
+  end
 end

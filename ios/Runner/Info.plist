@@ -45,5 +45,60 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    
+	<!-- Background remote notifications for Firebase Messaging -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+    
+	<!-- Location permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location to show nearby services and improve booking suggestions while you use the app.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app uses your location to show nearby services and improve booking suggestions even when running in the background.</string>
+	<!-- Optional for older iOS versions -->
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app uses your location to provide relevant services near you.</string>
+
+	<!-- Camera & Photos (image_picker, stripe card scanning) -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to capture photos or scan cards for bookings and profile updates.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to select images for your profile or attachments.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save images to your library.</string>
+
+	<!-- Microphone (video capture) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone when capturing videos.</string>
+
+	<!-- Face ID (Stripe SCA / authentication) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>This app may use Face ID to authenticate payments securely.</string>
+
+	<!-- Stripe & Redirect URL handling -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Used by flutter_stripe for 3DS/SCA redirects -->
+				<string>stripesdk</string>
+				<string>flutter.stripe</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Allow checking for installed payment/UPI apps (Razorpay external wallets) -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>razorpay</string>
+		<string>upi</string>
+		<string>gpay</string>
+		<string>google</string>
+		<string>phonepe</string>
+		<string>paytm</string>
+	</array>
 </dict>
 </plist>
