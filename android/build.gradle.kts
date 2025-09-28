@@ -11,7 +11,6 @@ allprojects {
         maven(url = uri("https://phonepe.jfrog.io/artifactory/libs-release-local")) {
             content { includeGroup("phonepe.intentsdk.android.release") }
         }
-        // Optional offline fallback: local Maven directory
         maven(url = uri("${rootDir}/maven-local")) {
             content { includeGroup("phonepe.intentsdk.android.release") }
         }

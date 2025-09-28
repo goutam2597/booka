@@ -88,4 +88,6 @@ dependencies {
 
     // (Optional explicit add; the force() above already pins this)
     implementation("com.google.guava:guava:33.2.1-android")
+
+    implementation("androidx.appcompat:appcompat:1.4.0")
 }

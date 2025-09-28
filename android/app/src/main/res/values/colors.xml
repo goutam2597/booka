@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand color to avoid black flash and match Flutter splash background as closely as possible -->
+    <color name="splash_bg">#F83758</color>
+</resources>
