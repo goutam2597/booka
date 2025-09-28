@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../providers/booking_stepper_provider.dart';
 
 import '../../../../app/routes/app_routes.dart';
+import 'package:bookapp_customer/utils/navigation_helper.dart';
 
 class CustomStepperScreen extends StatelessWidget {
   final ServicesModel selectedService;
@@ -27,17 +28,17 @@ class CustomStepperScreen extends StatelessWidget {
       child: Consumer<BookingStepperProvider>(
         builder: (context, provider, _) {
           void handleBack() {
-            // If on confirmation, go Home
             if (provider.activeStep == 6) {
               Get.offAllNamed(AppRoutes.bottomNav);
               return;
             }
-            // If on the first step (staff selection), back should take user Home
             if (provider.activeStep <= 1) {
-              Get.offAllNamed(AppRoutes.bottomNav);
+              NavigationHelper.safeBack(
+                context,
+                fallbackRoute: AppRoutes.bottomNav,
+              );
               return;
             }
-            // Otherwise, go to previous step within the flow
             provider.goToPreviousStep();
           }
 

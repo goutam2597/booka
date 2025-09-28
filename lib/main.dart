@@ -60,15 +60,12 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   runZonedGuarded(
     () async {
-      // Ensure binding and runApp happen in the same zone (avoids zone mismatch warning)
       WidgetsFlutterBinding.ensureInitialized();
 
-      // Global error guards
       FlutterError.onError = (FlutterErrorDetails details) {
         FlutterError.dumpErrorToConsole(details);
       };
       PlatformDispatcher.instance.onError = (error, stack) {
-        // ignore: avoid_print
         print('Uncaught async error: $error');
         return true;
       };
@@ -170,7 +167,6 @@ Future<void> main() async {
       );
     },
     (error, stack) {
-      // ignore: avoid_print
       print('Zone error: $error');
     },
   );
