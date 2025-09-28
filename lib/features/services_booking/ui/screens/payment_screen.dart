@@ -85,17 +85,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
 
-                          // Top priority gateways
-                          if (show(GatewayType.googlePay)) ...[
-                            WalletCard(
-                              asset: AssetsPath.pgwGooglePaySvg,
-                              label: 'Google Pay',
-                              onTap: () => p.run(
-                                () => controller.payWithGooglePay(context),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
+                          // Google Pay temporarily disabled
 
                           if (show(GatewayType.paypal)) ...[
                             WalletCard(

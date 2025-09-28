@@ -139,7 +139,8 @@ GatewayType? gatewayFromApiKeyword(String raw) {
   switch (k) {
     case 'googlepay':
     case 'google_pay':
-      return GatewayType.googlePay;
+      // Temporarily disabled
+      return null;
     case 'paypal':
       return GatewayType.paypal;
     case 'stripe':

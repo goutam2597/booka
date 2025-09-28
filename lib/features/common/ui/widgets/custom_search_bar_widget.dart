@@ -1,4 +1,3 @@
-// lib/features/services/ui/widgets/all_services_widgets/custom_search_bar_widget.dart
 import 'package:bookapp_customer/app/assets_path.dart';
 import 'package:bookapp_customer/features/services/data/models/services_filter.dart';
 import 'package:bookapp_customer/features/services/providers/services_provider.dart';
@@ -8,9 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-/// A customizable search bar widget with optional filter icon.
-/// Now it syncs the field text with ServicesProvider.query
-/// and shows a close "X" when a search is active.
 class CustomSearchBarWidget extends StatefulWidget {
   final bool showFilter;
   final ValueChanged<String>? onChanged;
@@ -24,7 +20,7 @@ class CustomSearchBarWidget extends StatefulWidget {
     this.showFilter = true,
     this.onChanged,
     this.onFilterTap,
-    this.borderRadius = const BorderRadius.all(Radius.circular(32)),
+    this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.hintText = 'Search Services',
     this.onSearch,
   });
@@ -82,8 +78,8 @@ class _CustomSearchBarWidgetState extends State<CustomSearchBarWidget> {
       elevation: 0.3,
       borderRadius: widget.borderRadius,
       child: Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        height: 52,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade200),
           color: Colors.white,

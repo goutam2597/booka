@@ -62,9 +62,24 @@ class _BookAppState extends State<BookApp> {
       ],
 
       builder: (context, child) {
-        final content = (!online)
+        final base = (!online)
             ? const NoInternetScreen()
             : (child ?? const SizedBox.shrink());
+
+        // Global unfocus: tap anywhere outside inputs to dismiss keyboard/focus
+        final content = GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            final focus = FocusManager.instance.primaryFocus;
+            if (focus != null && !focus.hasPrimaryFocus) {
+              focus.unfocus();
+            } else {
+              FocusScope.of(context).unfocus();
+            }
+          },
+          child: base,
+        );
+
         return Directionality(
           textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
           child: Stack(

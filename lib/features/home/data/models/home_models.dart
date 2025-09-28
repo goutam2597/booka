@@ -40,67 +40,14 @@ class SectionContent {
   );
 }
 
-class ProcessItem {
-  final int id;
-  final String title;
-  final String text;
-  final String icon;
-  final String backgroundColor;
-
-  ProcessItem({
-    required this.id,
-    required this.title,
-    required this.text,
-    required this.icon,
-    required this.backgroundColor,
-  });
-
-  factory ProcessItem.fromJson(Map<String, dynamic> json) => ProcessItem(
-    id: json['id'] is int ? json['id'] : int.tryParse('${json['id']}') ?? 0,
-    title: json['title']?.toString() ?? '',
-    text: json['text']?.toString() ?? '',
-    icon: json['icon']?.toString() ?? '',
-    backgroundColor: json['background_color']?.toString() ?? '',
-  );
-}
-
-class TestimonialItem {
-  final int id;
-  final String name;
-  final String occupation;
-  final String image;
-  final String comment;
-  final String rating;
-
-  TestimonialItem({
-    required this.id,
-    required this.name,
-    required this.occupation,
-    required this.image,
-    required this.comment,
-    required this.rating,
-  });
-
-  factory TestimonialItem.fromJson(Map<String, dynamic> json) =>
-      TestimonialItem(
-        id: json['id'] is int ? json['id'] : int.tryParse('${json['id']}') ?? 0,
-        name: json['name']?.toString() ?? '',
-        occupation: json['occupation']?.toString() ?? '',
-        image: json['image']?.toString() ?? '',
-        comment: json['comment']?.toString() ?? '',
-        rating: json['rating']?.toString() ?? '',
-      );
-}
 
 class HomeResponse {
   final AdminModel admin;
   final SectionContent sectionContent;
   final List<CategoryModel> categories;
   final List<ServicesModel> featuredServices;
-  final List<ServicesModel> latestServices; // from services.data
+  final List<ServicesModel> latestServices;
   final List<VendorModel> featuredVendors;
-  final List<ProcessItem> processes;
-  final List<TestimonialItem> testimonials;
 
   HomeResponse({
     required this.admin,
@@ -109,8 +56,6 @@ class HomeResponse {
     required this.featuredServices,
     required this.latestServices,
     required this.featuredVendors,
-    required this.processes,
-    required this.testimonials,
   });
 
   factory HomeResponse.fromJson(Map<String, dynamic> json) {
@@ -135,14 +80,14 @@ class HomeResponse {
             )
             .toList();
 
-  // services may come as a bare array or wrapped like { data: [...] }
-  final dynamic servicesRaw = json['services'];
-  final List latestList = servicesRaw is List
-    ? servicesRaw
-    : (servicesRaw is Map
-      ? ((servicesRaw)['data'] as List?) ?? const []
-      : const []);
-  final List<ServicesModel> latestServices = latestList
+    // services may come as a bare array or wrapped like { data: [...] }
+    final dynamic servicesRaw = json['services'];
+    final List latestList = servicesRaw is List
+        ? servicesRaw
+        : (servicesRaw is Map
+              ? ((servicesRaw)['data'] as List?) ?? const []
+              : const []);
+    final List<ServicesModel> latestServices = latestList
         .map((e) => ServicesModel.fromJson((e as Map).cast<String, dynamic>()))
         .toList();
 
@@ -156,16 +101,6 @@ class HomeResponse {
             )
             .toList();
 
-    final processes = (json['processes'] as List? ?? const [])
-        .map((e) => ProcessItem.fromJson((e as Map).cast<String, dynamic>()))
-        .toList();
-
-    final testimonials = (json['testimonials'] as List? ?? const [])
-        .map(
-          (e) => TestimonialItem.fromJson((e as Map).cast<String, dynamic>()),
-        )
-        .toList();
-
     return HomeResponse(
       admin: admin,
       sectionContent: section,
@@ -173,8 +108,7 @@ class HomeResponse {
       featuredServices: featured,
       latestServices: latestServices,
       featuredVendors: featuredVendors,
-      processes: processes,
-      testimonials: testimonials,
+
     );
   }
 }

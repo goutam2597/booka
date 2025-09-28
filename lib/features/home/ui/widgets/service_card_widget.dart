@@ -217,6 +217,16 @@ class ServiceCardWidget extends StatelessWidget {
             fontSize: 20,
           ),
         ),
+        const SizedBox(width: 8),
+        Text(
+          item.previousPrice ?? '',
+          style: AppTextStyles.bodyLargeGrey.copyWith(
+            color: Colors.grey.shade600,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            decoration: TextDecoration.lineThrough,
+          ),
+        ),
         const Spacer(),
         SizedBox(
           width: 104,

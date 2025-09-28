@@ -1,19 +1,16 @@
 import 'package:bookapp_customer/features/common/ui/widgets/network_app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookapp_customer/app/app_colors.dart';
 import 'package:bookapp_customer/app/app_text_styles.dart';
 import 'package:bookapp_customer/app/assets_path.dart';
 import 'package:bookapp_customer/app/order_status_color.dart';
 import 'package:bookapp_customer/app/text_capitalizer.dart';
-
 import 'package:bookapp_customer/features/appointments/models/appointment_model.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_cpi.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_icon_button_widgets.dart';
 import 'package:bookapp_customer/features/home/providers/notification_provider.dart';
 import 'package:get/get.dart';
-
 import '../../../../app/routes/app_routes.dart';
 import '../../providers/appointments_provider.dart';
 
@@ -31,12 +28,10 @@ class AppointmentsScreen extends StatelessWidget {
       appBar: _buildAppBar(context, hasUnread),
       body: Consumer<AppointmentsProvider>(
         builder: (context, prov, _) {
-          // Loading vendors (initial)
           if (prov.loadingVendors && prov.vendors.isEmpty) {
             return const Center(child: CustomCPI());
           }
 
-          // Error state (show refresh even on error/empty)
           if (prov.errorMessage != null &&
               prov.vendors.isEmpty &&
               prov.appointments.isEmpty) {
@@ -300,48 +295,20 @@ class _AppointmentTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                item.name,
-                style: AppTextStyles.headingSmall.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 12,
-                runSpacing: 6,
-                crossAxisAlignment: WrapCrossAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('${"By".tr} : ', style: AppTextStyles.bodyLargeGrey),
-                      Text(
-                        prov.vendorNameById(item.vendorId).toTitleCase(),
-                        style: AppTextStyles.bodyLarge,
+                  Expanded(
+                    child: Text(
+                      '${'Booking ID.'.tr} #${item.id}',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.colorText,
+                        fontWeight: FontWeight.w600,
                       ),
-                      _vDivider(),
-                      Text(
-                        "${"Booking Date".tr} : ",
-                        style: AppTextStyles.bodyLargeGrey,
-                      ),
-                      Text(
-                        item.bookingDate,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ],
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("Time: ", style: AppTextStyles.bodyLargeGrey),
-                      Text(
-                        "${item.startDate} – ${item.endDate}",
-                        style: AppTextStyles.bodyLarge,
-                      ),
-                    ],
-                  ),
-                  _vDivider(),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -349,15 +316,115 @@ class _AppointmentTile extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: getOrderStatusColor(item.orderStatus),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       item.orderStatus.tr.toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
                       ),
                     ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              FittedBox(
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.event_note,
+                          size: 16,
+                          color: Colors.grey.shade700,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${'Booking Date'.tr}: ${item.bookingDate}',
+                          style: AppTextStyles.bodySmall,
+                        ),
+                      ],
+                    ),
+                    _vDivider(),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 16,
+                          color: Colors.grey.shade700,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${item.startDate} – ${item.endDate}',
+                          style: AppTextStyles.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 8),
+              Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
+              const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.name,
+                          style: AppTextStyles.headingSmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.storefront_rounded,
+                        size: 16,
+                        color: Colors.grey.shade700,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          '${'Vendor'.tr}: ${prov.vendorNameById(item.vendorId).toTitleCase()}',
+                          style: AppTextStyles.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'View details'.tr,
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: AppColors.primaryColor,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -373,7 +440,7 @@ class _AppointmentTile extends StatelessWidget {
     child: VerticalDivider(
       thickness: 1.5,
       color: Colors.grey.shade600,
-      width: 10,
+      width: 0,
     ),
   );
 }

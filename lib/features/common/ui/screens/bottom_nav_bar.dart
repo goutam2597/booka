@@ -95,8 +95,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Future<void> _onTappedItem(BuildContext context, int index) async {
     final nav = _nav;
 
-    // Home, Services, and Account do NOT force login
-    if (index == 0 || index == 1 || index == 3) {
+    // Home and Services do NOT force login
+    if (index == 0 || index == 1) {
       nav.setIndex(index);
       if (_pageController.hasClients) {
         _pageController.animateToPage(
@@ -108,6 +108,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       return;
     }
 
+    // Appointments and Account require login
     if (!AuthAndNetworkService.isLoggedIn.value) {
       final loggedIn = await Get.toNamed(AppRoutes.login) as bool?;
 

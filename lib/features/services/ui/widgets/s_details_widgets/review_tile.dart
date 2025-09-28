@@ -75,72 +75,66 @@ class ReviewTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: _UserAvatar(review.user?.image),
-                    ),
-                    SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(review.user?.name ?? 'Unknown'),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            ratingStars,
-                            const SizedBox(width: 6),
+                Container(
+                  width: 60,
+                  height: 60,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: _UserAvatar(review.user?.image),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              review.user?.name ?? 'Unknown',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          if ((createdAtIso ?? '').isNotEmpty)
                             Text(
-                              '(${review.rating ?? ''})',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
+                              timeAgoFromIso(createdAtIso),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: Colors.grey.shade600,
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              'Verified User',
-                              style: AppTextStyles.bodySmall,
-                            ),
-                            SizedBox(width: 4),
-                            Icon(Icons.verified, color: Colors.green, size: 16),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      (review.user?.address ?? '').length > 20
-                          ? ('${review.user!.address!.substring(0, 20)}...')
-                          : (review.user?.address ?? ''),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    if ((createdAtIso ?? '').isNotEmpty)
-                      Text(
-                        timeAgoFromIso(createdAtIso),
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
+                        ],
                       ),
-                  ],
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          ratingStars,
+                          const SizedBox(width: 6),
+                          Text(
+                            '(${review.rating ?? ''})',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Text('Verified User', style: AppTextStyles.bodySmall),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.verified,
+                            color: Colors.green,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -162,7 +156,8 @@ class _UserAvatar extends StatelessWidget {
   final String? url;
   const _UserAvatar(this.url);
 
-  bool get _isNetwork => (url != null && url!.isNotEmpty && !url!.startsWith('assets/'));
+  bool get _isNetwork =>
+      (url != null && url!.isNotEmpty && !url!.startsWith('assets/'));
 
   @override
   Widget build(BuildContext context) {
@@ -176,16 +171,11 @@ class _UserAvatar extends StatelessWidget {
           highlightColor: Colors.grey.shade100,
           child: Container(color: Colors.white),
         ),
-        errorWidget: (context, u, e) => Image.asset(
-          AssetsPath.userPlaceholderPng,
-          fit: BoxFit.cover,
-        ),
+        errorWidget: (context, u, e) =>
+            Image.asset(AssetsPath.userPlaceholderPng, fit: BoxFit.cover),
       );
     }
-    return Image.asset(
-      AssetsPath.userPlaceholderPng,
-      fit: BoxFit.cover,
-    );
+    return Image.asset(AssetsPath.userPlaceholderPng, fit: BoxFit.cover);
   }
 }
 

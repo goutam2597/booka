@@ -3,9 +3,7 @@ import 'package:bookapp_customer/app/app_text_styles.dart';
 import 'package:bookapp_customer/app/app_colors.dart';
 import 'package:bookapp_customer/app/assets_path.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_icon_button_widgets.dart';
-import 'package:get/get.dart';
-
-import '../../../../../app/routes/app_routes.dart';
+import 'package:bookapp_customer/utils/navigation_helper.dart';
 
 class DetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DetailsAppBar({super.key});
@@ -35,19 +33,7 @@ class DetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: CustomIconButtonWidget(
               assetPath: AssetsPath.backIconSvg,
               flipHorizontally: isRtl,
-              onTap: () {
-                final rootNav = Navigator.of(context, rootNavigator: true);
-                if (rootNav.canPop()) {
-                  rootNav.pop();
-                  return;
-                }
-                final localNav = Navigator.of(context);
-                if (localNav.canPop()) {
-                  localNav.pop();
-                  return;
-                }
-                Get.offAllNamed(AppRoutes.bottomNav);
-              },
+              onTap: () => NavigationHelper.safeBack(context),
             ),
           ),
         ],

@@ -8,10 +8,12 @@ class ServiceReviewsUiProvider extends ChangeNotifier {
   int _rating = 5;
   bool _submitting = false;
   String? _response;
+  bool _lastSuccess = false;
 
   int get rating => _rating;
   bool get submitting => _submitting;
   String? get response => _response;
+  bool get lastSuccess => _lastSuccess;
 
   void setRating(int r) {
     if (_submitting) return;
@@ -28,6 +30,7 @@ class ServiceReviewsUiProvider extends ChangeNotifier {
     if (commentCtrl.text.trim().isEmpty) return;
     _submitting = true;
     _response = null;
+    _lastSuccess = false;
     notifyListeners();
     try {
       final result = await ReviewNetworkService.submitReview(
@@ -36,6 +39,7 @@ class ServiceReviewsUiProvider extends ChangeNotifier {
         comment: commentCtrl.text,
       );
       _response = result.message;
+      _lastSuccess = result.success;
       if (result.success) {
         commentCtrl.clear();
         _rating = 5;
@@ -50,6 +54,7 @@ class ServiceReviewsUiProvider extends ChangeNotifier {
       }
     } catch (e) {
       _response = 'Failed: $e';
+      _lastSuccess = false;
     } finally {
       _submitting = false;
       notifyListeners();

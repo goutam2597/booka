@@ -10,8 +10,6 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../../app/routes/app_routes.dart';
-
 class HomeScreenHeaderWidget extends StatefulWidget {
   const HomeScreenHeaderWidget({super.key});
 
@@ -37,12 +35,7 @@ class _HomeScreenHeaderWidgetState extends State<HomeScreenHeaderWidget> {
     if (!mounted) return;
     provider.search(q);
     FocusScope.of(context).unfocus();
-    try {
-      context.read<NavProvider>().setIndex(1);
-    } catch (_) {
-      // Fallback: navigate to bottom nav with Services tab preselected
-      Get.toNamed(AppRoutes.bottomNav, arguments: 1);
-    }
+    context.read<NavProvider>().setIndex(1);
   }
 
   @override
@@ -104,7 +97,7 @@ class _HomeScreenHeaderWidgetState extends State<HomeScreenHeaderWidget> {
         child: _buildHeaderContent(sections),
       ),
       filterQuality: FilterQuality.low,
-      );
+    );
   }
 
   Widget _buildHeaderContent(SectionContent? sections) {
@@ -159,16 +152,16 @@ class _HomeScreenHeaderWidgetState extends State<HomeScreenHeaderWidget> {
   }
 
   Widget _buildSearchBar() {
-    final borderRadius = BorderRadius.circular(52);
+    final borderRadius = BorderRadius.circular(12);
     final border = OutlineInputBorder(
       borderSide: BorderSide(color: Colors.grey.shade100, width: 1.5),
       borderRadius: borderRadius,
     );
 
     return Positioned(
-      bottom: -25,
-      left: 16,
-      right: 16,
+      bottom: -24,
+      left: 8,
+      right: 8,
       child: Material(
         color: Colors.white,
         elevation: 1,
@@ -193,7 +186,7 @@ class _HomeScreenHeaderWidgetState extends State<HomeScreenHeaderWidget> {
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: 16,
+              vertical: 14,
             ),
             hintStyle: TextStyle(
               color: Colors.grey.shade400,

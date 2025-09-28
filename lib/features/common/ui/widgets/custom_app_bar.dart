@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../app/routes/app_routes.dart';
+import 'package:bookapp_customer/utils/navigation_helper.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
@@ -74,15 +75,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   assetPath: widget.icon,
                   flipHorizontally: isRtl,
 
-                  onTap:
-                      widget.onTap ??
-                      () {
-                        if (Navigator.of(context).canPop()) {
-                          Get.back();
-                        } else {
-                          Get.toNamed(AppRoutes.bottomNav);
-                        }
-                      },
+                  onTap: widget.onTap ??
+                      () => NavigationHelper.safeBack(context),
                 ),
               ),
 

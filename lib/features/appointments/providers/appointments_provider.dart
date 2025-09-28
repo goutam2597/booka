@@ -87,7 +87,7 @@ class AppointmentsProvider extends ChangeNotifier {
 
   void _startPolling() {
     _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(const Duration(seconds: 60), (_) {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       refreshAppointments();
     });
   }

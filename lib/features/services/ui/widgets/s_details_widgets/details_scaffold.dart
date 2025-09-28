@@ -5,10 +5,12 @@ import 'package:bookapp_customer/features/services/ui/widgets/s_details_widgets/
 import 'package:flutter/material.dart';
 import 'package:bookapp_customer/app/app_text_styles.dart';
 import 'package:bookapp_customer/app/app_colors.dart';
-import 'package:bookapp_customer/features/services/data/models/category_model.dart';
+// import 'package:bookapp_customer/features/services/data/models/category_model.dart';
 import 'package:bookapp_customer/features/services/data/models/service_details_model.dart';
 import 'package:bookapp_customer/features/services/ui/widgets/star_rating_widget.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:bookapp_customer/features/services/providers/services_provider.dart';
 
 import '../../../../../app/routes/app_routes.dart';
 import 'details_app_bar.dart';
@@ -55,19 +57,17 @@ class DetailsScaffold extends StatelessWidget {
                             children: [
                               if (details.relatedServices.isNotEmpty)
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     final first = details.relatedServices.first;
-                                    final categoryModel = CategoryModel(
-                                      id: first.id,
-                                      name: first.categoryName,
-                                      slug: first.categorySlug,
-                                      icon: '',
-                                      backgroundColor: '',
-                                    );
-                                    Get.toNamed(
-                                      AppRoutes.category,
-                                      arguments: categoryModel,
-                                    );
+                                    final name = first.categoryName.trim();
+                                    if (name.isEmpty) return;
+                                    final sp = context.read<ServicesProvider>();
+                                    await sp.init();
+                                    if (!context.mounted) return;
+                                    sp.search(name);
+                                    Get.offAllNamed(AppRoutes.bottomNav, arguments: {
+                                      'initialIndex': 1,
+                                    });
                                   },
                                   child: Text(
                                     details.relatedServices.isNotEmpty

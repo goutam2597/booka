@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:app_settings/app_settings.dart';
 
-/// High-level permission abstraction so the rest of the app does not import
-/// permission_handler directly. Add new permissions here as needed.
-class PermissionService {
-  static final PermissionService _instance = PermissionService._internal();
-  PermissionService._internal();
-  factory PermissionService() => _instance;
+class PermissionsHandler {
+  static final PermissionsHandler _instance = PermissionsHandler._internal();
+  PermissionsHandler._internal();
+  factory PermissionsHandler() => _instance;
 
   Future<PermissionStatus> statusAppNotification() async {
     if (Platform.isAndroid || Platform.isIOS) {
@@ -33,11 +31,13 @@ class PermissionService {
   }
 
   Future<PermissionStatus> statusCamera() async => Permission.camera.status;
-  Future<bool> requestCamera() async => _isGranted(await Permission.camera.request());
+  Future<bool> requestCamera() async =>
+      _isGranted(await Permission.camera.request());
 
   Future<PermissionStatus> statusPhotos() async {
-    if (Platform.isIOS) return Permission.photos.status; // iOS limited/provisional
-    return Permission.storage.status; // For legacy Android (if needed)
+    if (Platform.isIOS)
+      return Permission.photos.status;
+    return Permission.storage.status;
   }
 
   Future<bool> requestPhotos() async {
@@ -56,7 +56,6 @@ class PermissionService {
       if (ok) return true;
     } catch (_) {}
     try {
-      // Fallback: deep-link to notification settings if possible
       await AppSettings.openAppSettings(type: AppSettingsType.notification);
       return true;
     } catch (_) {}

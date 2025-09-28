@@ -2,7 +2,6 @@ import 'package:bookapp_customer/features/auth/providers/auth_provider.dart';
 import 'package:bookapp_customer/features/account/ui/widgets/dashboard_item.dart';
 import 'package:bookapp_customer/features/account/ui/widgets/profile_card.dart';
 import 'package:bookapp_customer/features/account/ui/widgets/profile_card_loading.dart';
-import 'package:bookapp_customer/features/account/ui/widgets/profile_card_not_logged_in.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,6 +27,16 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+
+    // If the user is not logged in, redirect to login and show an empty view.
+    if (!auth.isLoggedIn) {
+      // Defer navigation to next frame to avoid setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) return;
+        Get.toNamed(AppRoutes.login);
+      });
+      return const Scaffold(body: SizedBox.shrink());
+    }
 
     return Scaffold(
       body: Column(
@@ -72,7 +81,7 @@ class AccountScreen extends StatelessWidget {
   }
 
   Widget _profileCard(AuthProvider auth) {
-    if (!auth.isLoggedIn) return const ProfileCardNotLoggedIn();
+    if (!auth.isLoggedIn) return const SizedBox.shrink();
     if (auth.loadingDashboard) return const ProfileCardLoadingState();
     if (auth.dashboard != null) {
       return ProfileCard(accountData: auth.dashboard!);

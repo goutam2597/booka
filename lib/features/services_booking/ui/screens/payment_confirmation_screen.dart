@@ -9,8 +9,8 @@ import 'package:bookapp_customer/features/services_booking/ui/widgets/booking_te
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:bookapp_customer/features/appointments/providers/appointments_provider.dart';
-
 import '../../../../app/routes/app_routes.dart';
+import 'package:bookapp_customer/features/services/providers/services_provider.dart';
 
 class PaymentConfirmationScreen extends StatelessWidget {
   final VoidCallback onBackToHome;
@@ -149,13 +149,18 @@ class PaymentConfirmationScreen extends StatelessWidget {
             InkWell(
               radius: 16,
               borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                if (services.category != null) {
-                  Get.offAllNamed(
-                    AppRoutes.category,
-                    arguments: services.category!,
-                  );
-                } else {}
+              onTap: () async {
+                final name = (services.categoryName).toString().trim();
+                if (name.isEmpty) return;
+                final sp = context.read<ServicesProvider>();
+                await sp.init();
+                if (!context.mounted) return;
+                sp.search(name);
+                // Navigate to BottomNav with Services tab selected
+                Get.offAllNamed(
+                  AppRoutes.bottomNav,
+                  arguments: {'initialIndex': 1},
+                );
               },
               child: _headerText(
                 '( ${services.categoryName} )',

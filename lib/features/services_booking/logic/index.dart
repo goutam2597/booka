@@ -4,7 +4,6 @@ export 'payment_shared.dart';
 export 'payment_controllers/stripe_controller.dart';
 export 'payment_controllers/flutterwave_controller.dart';
 export 'payment_controllers/paypal_controller.dart';
-export 'payment_controllers/google_pay_controller.dart';
 export 'payment_controllers/paystack_controller.dart';
 export 'payment_controllers/mollie_controller.dart';
 export 'payment_controllers/xendit_controller.dart';

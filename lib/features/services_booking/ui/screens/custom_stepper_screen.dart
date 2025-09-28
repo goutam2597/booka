@@ -26,6 +26,21 @@ class CustomStepperScreen extends StatelessWidget {
       create: (_) => BookingStepperProvider(selectedService: selectedService),
       child: Consumer<BookingStepperProvider>(
         builder: (context, provider, _) {
+          void handleBack() {
+            // If on confirmation, go Home
+            if (provider.activeStep == 6) {
+              Get.offAllNamed(AppRoutes.bottomNav);
+              return;
+            }
+            // If on the first step (staff selection), back should take user Home
+            if (provider.activeStep <= 1) {
+              Get.offAllNamed(AppRoutes.bottomNav);
+              return;
+            }
+            // Otherwise, go to previous step within the flow
+            provider.goToPreviousStep();
+          }
+
           Widget getCurrent() {
             final activeStep = provider.activeStep;
             final currentSubScreen = provider.currentSubScreen;
@@ -114,42 +129,47 @@ class CustomStepperScreen extends StatelessWidget {
 
           final stepDisplayIndex = provider.stepDisplayIndex;
 
-          return Scaffold(
-            body: Column(
-              children: [
-                CustomAppBar(
-                  title: 'Service Booking'.tr,
-                  onTap: () {
-                    provider.activeStep == 6
-                        ? Get.offAllNamed(AppRoutes.bottomNav)
-                        : provider.goToPreviousStep();
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomStepper(activeStep: stepDisplayIndex),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 350),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, animation) {
-                      final slideTween = Tween<Offset>(
-                        begin: Offset(provider.isForward ? 0.15 : -0.15, 0),
-                        end: Offset.zero,
-                      ).chain(CurveTween(curve: Curves.easeOutCubic));
-                      return FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: animation.drive(slideTween),
-                          child: child,
-                        ),
-                      );
+          return PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) return;
+              handleBack();
+            },
+            child: Scaffold(
+              body: Column(
+                children: [
+                  CustomAppBar(
+                    title: 'Service Booking'.tr,
+                    onTap: () {
+                      handleBack();
                     },
-                    child: KeyedSubtree(key: pageKey, child: getCurrent()),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  CustomStepper(activeStep: stepDisplayIndex),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        final slideTween = Tween<Offset>(
+                          begin: Offset(provider.isForward ? 0.15 : -0.15, 0),
+                          end: Offset.zero,
+                        ).chain(CurveTween(curve: Curves.easeOutCubic));
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: animation.drive(slideTween),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: KeyedSubtree(key: pageKey, child: getCurrent()),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },

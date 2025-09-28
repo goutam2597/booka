@@ -11,8 +11,6 @@ import 'package:bookapp_customer/features/auth/ui/screens/password_change.dart';
 import 'package:bookapp_customer/features/account/ui/screens/dashboard_screen.dart';
 import 'package:bookapp_customer/features/wishlist/ui/screens/wishlist_screen.dart';
 import 'package:bookapp_customer/features/account/ui/screens/settings_screen.dart';
-import 'package:bookapp_customer/features/home/ui/screens/all_categories_screen.dart';
-import 'package:bookapp_customer/features/home/ui/screens/category_screen.dart';
 import 'package:bookapp_customer/features/auth/ui/screens/signup_screen.dart';
 import 'package:bookapp_customer/features/auth/ui/screens/email_screen.dart';
 import 'package:bookapp_customer/features/auth/ui/screens/otp_screen.dart';
@@ -25,7 +23,6 @@ import 'package:bookapp_customer/features/home/data/models/notification_model.da
 import 'package:bookapp_customer/features/services_booking/ui/widgets/checkout_webview.dart';
 import 'package:bookapp_customer/features/services_booking/ui/widgets/authorize_net_token_webview.dart';
 import 'package:bookapp_customer/features/auth/ui/screens/sign_up_sccess.dart';
-import 'package:bookapp_customer/features/services/data/models/category_model.dart';
 import 'package:bookapp_customer/features/services/data/models/services_model.dart';
 
 class AppRoutes {
@@ -43,8 +40,6 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String wishlist = '/wishlist';
   static const String settings = '/settings';
-  static const String allCategories = '/all-categories';
-  static const String category = '/category';
   static const String signup = '/signup';
   static const String email = '/email';
   static const String otp = '/otp';
@@ -81,7 +76,7 @@ class AppPages {
           redirect = args;
         } else if (args is Map) {
           final val = args['redirectToHome'];
-            if (val is bool) redirect = val;
+          if (val is bool) redirect = val;
         }
         return LoginScreen(redirectToHome: redirect);
       },
@@ -147,18 +142,6 @@ class AppPages {
       },
     ),
     GetPage(name: AppRoutes.settings, page: () => const SettingsScreen()),
-    GetPage(
-      name: AppRoutes.allCategories,
-      page: () {
-        final cats = (Get.arguments as List<dynamic>? ?? const <dynamic>[])
-            .cast<CategoryModel>();
-        return AllCategoriesScreen(categories: cats);
-      },
-    ),
-    GetPage(
-      name: AppRoutes.category,
-      page: () => CategoryScreen(category: Get.arguments as CategoryModel),
-    ),
     GetPage(name: AppRoutes.signup, page: () => const SignupScreen()),
     GetPage(name: AppRoutes.email, page: () => const EmailScreen()),
     GetPage(

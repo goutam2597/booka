@@ -1,7 +1,10 @@
+import 'package:bookapp_customer/app/routes/app_routes.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/category_filter_chips.dart';
+import 'package:bookapp_customer/features/services/providers/services_provider.dart';
 import 'package:bookapp_customer/features/home/ui/widgets/featured_services.dart';
 import 'package:bookapp_customer/features/home/ui/widgets/home_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:bookapp_customer/app/app_colors.dart';
@@ -13,8 +16,9 @@ import 'package:bookapp_customer/features/home/ui/widgets/home_screen_header_wid
 import 'package:bookapp_customer/features/home/ui/widgets/home_vendor_list_view.dart';
 import 'package:bookapp_customer/features/home/ui/widgets/service_card_widget.dart';
 import 'package:bookapp_customer/features/home/ui/widgets/text_n_button_widget.dart';
+import 'package:bookapp_customer/features/services/ui/widgets/all_services_widgets/search_filter_widget.dart';
+import 'package:bookapp_customer/features/services/data/models/services_filter.dart';
 import 'package:bookapp_customer/features/common/providers/nav_provider.dart';
-import '../../../../app/routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -126,14 +130,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           vertical: 8,
                         ),
                         child: TextNButtonWidget(
-                          title: 'Popular Services'.tr,
-                          onTap: () {
-                            try {
-                              context.read<NavProvider>().setIndex(1);
-                            } catch (_) {
-                              Get.toNamed(AppRoutes.bottomNav, arguments: 1);
-                            }
-                          },
+                          title:
+                              context
+                                  .read<HomeProvider>()
+                                  .sections
+                                  ?.latestServiceSectionTitle ??
+                              'Latest Services',
+                          onTap: () => context.read<NavProvider>().setIndex(1),
                         ),
                       ),
                     ),
@@ -197,19 +200,52 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: padding, vertical: 16),
           child: TextNButtonWidget(
             title: vm.sections?.categorySectionTitle ?? 'Categories'.tr,
-            onTap: () =>
-                Get.toNamed(AppRoutes.allCategories, arguments: vm.categories),
+            actionText: 'Filter',
+            icon: FontAwesomeIcons.sliders,
+            size: 14,
+            onTap: () async {
+              final sp = context.read<ServicesProvider>();
+              await sp.init();
+              if (!context.mounted) return;
+
+              final result = await showDialog<ServicesFilter>(
+                context: context,
+                builder: (_) => SearchFilterWidget(
+                  initial: sp.filter,
+                  categories: sp.allCategoryNames,
+                  ratings: const ['All', '5', '4', '3', '2', '1'],
+                ),
+              );
+
+              if (result != null) {
+                final normalized = ServicesFilter(
+                  category: (result.category == 'All') ? null : result.category,
+                  minRating: result.minRating,
+                  minPrice: result.minPrice,
+                  maxPrice: result.maxPrice,
+                  sort: result.sort,
+                );
+                sp.applyFilter(normalized);
+                // Navigate to Services only when filters are applied
+                context.read<NavProvider>().setIndex(1);
+              }
+            },
           ),
         ),
         SizedBox(
           height: height,
           child: CategoryListWidget(
             categories: vm.categories,
-            onCategoryTap: (cat) =>
-                Get.toNamed(AppRoutes.category, arguments: cat),
+            onCategoryTap: (cat) async {
+              final sp = context.read<ServicesProvider>();
+              await sp.init();
+              if (!context.mounted) return;
+              sp.search(cat.name);
+              context.read<NavProvider>().setIndex(1);
+            },
           ),
         ),
       ],

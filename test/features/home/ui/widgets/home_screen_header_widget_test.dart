@@ -24,8 +24,6 @@ class _FakeHomeNetworkService extends HomeNetworkService {
       featuredServices: const [],
       latestServices: const [],
       featuredVendors: const [],
-      processes: const [],
-      testimonials: const [],
     );
   }
 }
@@ -54,37 +52,36 @@ Future<void> _mockHomeHeaderAssets() async {
       <String, Object?>{'asset': AssetsPath.topBGPng, 'dpr': 1.0},
     ],
   };
-  final manifestBin = const StandardMessageCodec().encodeMessage(manifestMap) as ByteData;
+  final manifestBin =
+      const StandardMessageCodec().encodeMessage(manifestMap) as ByteData;
   final manifestJson = jsonEncode({
     AssetsPath.topBGPng: [AssetsPath.topBGPng],
   });
 
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMessageHandler('flutter/assets', (ByteData? message) async {
-    if (message == null) return null;
-    final key = utf8.decode(message.buffer.asUint8List());
-    if (key == 'AssetManifest.bin') {
-      return manifestBin;
-    }
-    if (key == 'AssetManifest.json') {
-      final bytes = Uint8List.fromList(utf8.encode(manifestJson));
-      return ByteData.sublistView(bytes);
-    }
-    if (key == AssetsPath.searchIconSvg) {
-      return ByteData.sublistView(svgBytes);
-    }
-    if (key == AssetsPath.topBGPng) {
-      return ByteData.sublistView(pngBytes);
-    }
-    return null; // fall back for others
-  });
+        if (message == null) return null;
+        final key = utf8.decode(message.buffer.asUint8List());
+        if (key == 'AssetManifest.bin') {
+          return manifestBin;
+        }
+        if (key == 'AssetManifest.json') {
+          final bytes = Uint8List.fromList(utf8.encode(manifestJson));
+          return ByteData.sublistView(bytes);
+        }
+        if (key == AssetsPath.searchIconSvg) {
+          return ByteData.sublistView(svgBytes);
+        }
+        if (key == AssetsPath.topBGPng) {
+          return ByteData.sublistView(pngBytes);
+        }
+        return null; // fall back for others
+      });
 }
 
 Widget _wrapWithProviders(Widget child, HomeProvider home) {
   return MultiProvider(
-    providers: [
-      ChangeNotifierProvider<HomeProvider>.value(value: home),
-    ],
+    providers: [ChangeNotifierProvider<HomeProvider>.value(value: home)],
     child: MaterialApp(
       home: Scaffold(
         body: Center(

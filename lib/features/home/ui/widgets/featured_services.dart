@@ -1,11 +1,8 @@
-
-import 'package:bookapp_customer/app/routes/app_routes.dart';
 import 'package:bookapp_customer/features/common/providers/nav_provider.dart';
 import 'package:bookapp_customer/features/home/providers/home_provider.dart';
 import 'package:bookapp_customer/features/home/ui/widgets/service_card_widget.dart';
 import 'package:bookapp_customer/features/home/ui/widgets/text_n_button_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class FeaturedServices extends StatelessWidget {
@@ -37,18 +34,12 @@ class FeaturedServices extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: padding, vertical: 8),
           child: TextNButtonWidget(
             title:
-            context
-                .read<HomeProvider>()
-                .sections
-                ?.featuredServiceSectionTitle ??
+                context
+                    .read<HomeProvider>()
+                    .sections
+                    ?.featuredServiceSectionTitle ??
                 'Featured Services',
-            onTap: () {
-              try {
-                context.read<NavProvider>().setIndex(1);
-              } catch (_) {
-                Get.toNamed(AppRoutes.bottomNav, arguments: 1);
-              }
-            },
+            onTap: () => context.read<NavProvider>().setIndex(1),
           ),
         ),
         SizedBox(

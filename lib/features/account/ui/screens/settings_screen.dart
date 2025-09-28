@@ -1,8 +1,7 @@
-import 'package:bookapp_customer/permissions/permission_service.dart';
+import 'package:bookapp_customer/utils/permissions_handler.dart';
 import 'package:bookapp_customer/app/app_colors.dart';
 import 'package:bookapp_customer/app/providers/locale_provider.dart';
 import 'package:bookapp_customer/features/account/providers/notification_settings_provider.dart';
-import 'package:bookapp_customer/features/account/ui/screens/legal_screen.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_app_bar.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_snack_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +52,6 @@ class _SettingsScreenState extends State<SettingsScreen>
     final notif = context.watch<NotificationSettingsProvider>();
     final lp = context.watch<LocaleProvider>();
     final langs = lp.languages;
-    // theme is driven by Basic API brand colors only
     final items = langs.isNotEmpty
         ? langs
               .map((l) => DropdownMenuItem(value: l.code, child: Text(l.name)))
@@ -70,10 +68,8 @@ class _SettingsScreenState extends State<SettingsScreen>
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Messages (Notifications)
                 _tile(
                   title: 'Notifications'.tr,
-                  subtitle: 'Receive exclusive offers and updates'.tr,
                   trailing: Switch(
                     inactiveThumbColor: AppColors.primaryColor,
                     inactiveTrackColor: Colors.white,
@@ -84,9 +80,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                     value: notif.appEnabled,
                     onChanged: (v) async {
                       if (!mounted) return;
-                      final perm = PermissionService();
+                      final perm = PermissionsHandler();
                       if (v) {
-                        // Step 1: check current OS-level permission before asking provider
                         final status = await perm.statusAppNotification();
                         if (status.isPermanentlyDenied) {
                           await perm.openAppSettingsSafe();
@@ -95,7 +90,6 @@ class _SettingsScreenState extends State<SettingsScreen>
                         if (!status.isGranted) {
                           final granted = await perm.requestAppNotification();
                           if (!granted) {
-                            // If user denied again, offer settings as fallback
                             await perm.openAppSettingsSafe();
                             return;
                           }
@@ -107,7 +101,6 @@ class _SettingsScreenState extends State<SettingsScreen>
                           await perm.openAppSettingsSafe();
                         }
                       } else {
-                        // Turning off in-app toggle, but allow user to manage OS settings
                         await context
                             .read<NotificationSettingsProvider>()
                             .turnOff();
@@ -118,24 +111,34 @@ class _SettingsScreenState extends State<SettingsScreen>
                 ),
                 if (!notif.osAuthorized)
                   Padding(
-                    padding: const EdgeInsets.only(top: 6, left: 4, right: 4, bottom: 8),
+                    padding: const EdgeInsets.only(
+                      top: 6,
+                      left: 4,
+                      right: 4,
+                      bottom: 8,
+                    ),
                     child: InkWell(
                       onTap: () async {
-                        await PermissionService().openAppSettingsSafe();
+                        await PermissionsHandler().openAppSettingsSafe();
                       },
                       child: Row(
                         children: [
-                          const Icon(Icons.info_outline, size: 18, color: Colors.redAccent),
+                          const Icon(
+                            Icons.info_outline,
+                            size: 18,
+                            color: Colors.redAccent,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Notifications are disabled in system settings'.tr,
+                              'Notifications are disabled in system settings'
+                                  .tr,
                               style: const TextStyle(color: Colors.redAccent),
                             ),
                           ),
                           TextButton(
                             onPressed: () async {
-                              await PermissionService().openAppSettingsSafe();
+                              await PermissionsHandler().openAppSettingsSafe();
                             },
                             child: Text('Open Settings'.tr),
                           ),
@@ -193,33 +196,6 @@ class _SettingsScreenState extends State<SettingsScreen>
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 8),
-                // Terms & Conditions
-                _navTile(
-                  title: 'Terms & Conditions',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LegalScreen(
-                        title: 'Terms & Conditions',
-                        pageKey: 'terms',
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Privacy Policy
-                _navTile(
-                  title: 'Privacy Policy'.tr,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LegalScreen(
-                        title: 'Privacy Policy'.tr,
-                        pageKey: 'privacy',
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -227,10 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen>
       ),
     );
   }
-  // Removed external AppSettings dependency; using permission_handler
-  // openAppSettings via PermissionService instead.
 
-  // Styled list tiles similar to the referenced design
   Widget _tile({
     required String title,
     String? subtitle,
@@ -248,18 +221,4 @@ class _SettingsScreenState extends State<SettingsScreen>
       ),
     );
   }
-
-  Widget _navTile({required String title, required VoidCallback onTap}) {
-    return Card(
-      color: Colors.white,
-      elevation: 0.2,
-      child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  // removed _pickColor dialog and related logic
 }

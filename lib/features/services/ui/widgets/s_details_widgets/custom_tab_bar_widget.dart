@@ -362,6 +362,12 @@ class _CustomTabBarWidgetState extends State<CustomTabBarWidget>
                   TextFormField(
                     controller: reviewsProvider.commentCtrl,
                     maxLines: 4,
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return 'Please write a review'.tr;
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
                       hintText: 'Share your experience...',
                       border: OutlineInputBorder(
@@ -379,28 +385,22 @@ class _CustomTabBarWidgetState extends State<CustomTabBarWidget>
                     width: double.infinity,
                     height: 52,
                     child: CustomButtonWidget(
-                      onPressed: () {
-                        reviewsProvider.submitting
-                            ? null
-                            : () async {
-                                if (!_formKey.currentState!.validate()) return;
-                                await reviewsProvider.submit(
-                                  details: d,
-                                  dataProvider: context
-                                      .read<ServiceDetailsProvider>(),
-                                );
-                                if (!context.mounted) return;
-                                CustomSnackBar.show(
-                                  context,
-                                  reviewsProvider.response ?? 'Done',
-                                  title:
-                                      (reviewsProvider.response ?? '')
-                                          .toLowerCase()
-                                          .contains('fail')
-                                      ? 'Error'
-                                      : 'Success',
-                                );
-                              };
+                      onPressed: () async {
+                        if (reviewsProvider.submitting) return;
+                        if (!_formKey.currentState!.validate()) return;
+                        await reviewsProvider.submit(
+                          details: d,
+                          dataProvider:
+                              context.read<ServiceDetailsProvider>(),
+                        );
+                        if (!context.mounted) return;
+                        CustomSnackBar.show(
+                          context,
+                          reviewsProvider.response ?? 'Done',
+                          title: reviewsProvider.lastSuccess
+                              ? 'Success'
+                              : 'Error',
+                        );
                       },
                       text: '',
                       child: reviewsProvider.submitting

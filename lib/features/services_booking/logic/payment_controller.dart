@@ -36,7 +36,6 @@ class PaymentController {
   final Map<String, String> billingDetails;
   final int totalAmountMinor;
 
-  /// supply `() => context.read<AuthProvider>()`
   final AuthProvider Function() readAuth;
 
   final void Function(String paymentMethod, String? bookingId) onComplete;
@@ -112,10 +111,6 @@ class PaymentController {
   Future<void> payWithPayPal(BuildContext context) async =>
       PayPalController.pay(context, _pc());
 
-  // -------------------- GOOGLE PAY --------------------
-  Future<void> payWithGooglePay(BuildContext context) async =>
-      GooglePayController.pay(context, _pc());
-
   // -------------------- PAYSTACK --------------------
   Future<void> payWithPayStack(BuildContext context) async =>
       PayStackController.pay(context, _pc());
@@ -153,18 +148,18 @@ class PaymentController {
     BuildContext context, {
     required String gatewayName,
     String instructions = '',
-        String attachmentFieldName = 'attachment',
-        bool showAttachment = true,
-        bool attachmentRequired = false,
+    String attachmentFieldName = 'attachment',
+    bool showAttachment = true,
+    bool attachmentRequired = false,
   }) async {
     final shared = PaymentShared(_pc());
     await shared.runOfflinePayment(
       context: context,
       gatewayName: gatewayName,
       instructions: instructions,
-            attachmentFieldName: attachmentFieldName,
-            showAttachment: showAttachment,
-            attachmentRequired: attachmentRequired,
+      attachmentFieldName: attachmentFieldName,
+      showAttachment: showAttachment,
+      attachmentRequired: attachmentRequired,
     );
   }
 }
