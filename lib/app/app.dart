@@ -4,7 +4,7 @@ import 'package:bookapp_customer/app/localization/translations.dart';
 import 'package:bookapp_customer/app/providers/connectivity_provider.dart';
 import 'package:bookapp_customer/app/routes/app_routes.dart';
 import 'package:bookapp_customer/features/common/ui/widgets/custom_cpi.dart';
-import 'package:bookapp_customer/features/common/ui/screens/no_internet_screen.dart';
+import 'package:bookapp_customer/features/common/ui/widgets/offline_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +40,8 @@ class _BookAppState extends State<BookApp> {
 
   @override
   Widget build(BuildContext context) {
-    final online = context.watch<ConnectivityProvider>().isOnline;
+    // Keep listening for connectivity changes indirectly via OfflineBanner.
+    // No UI blocking; banner handles its own visibility.
     final lp = context.watch<LocaleProvider>();
     final isArabic = lp.isRtl;
     final theme = context.watch<ThemeProvider>().theme;
@@ -62,9 +63,9 @@ class _BookAppState extends State<BookApp> {
       ],
 
       builder: (context, child) {
-        final base = (!online)
-            ? const NoInternetScreen()
-            : (child ?? const SizedBox.shrink());
+        // Always render the app content; offline data is served from
+        // cached sources in network services.
+        final base = (child ?? const SizedBox.shrink());
 
         // Global unfocus: tap anywhere outside inputs to dismiss keyboard/focus
         final content = GestureDetector(
@@ -85,6 +86,7 @@ class _BookAppState extends State<BookApp> {
           child: Stack(
             children: [
               content,
+              const OfflineBanner(),
               if (lp.isSwitching)
                 const Center(child: CustomCPI()),
             ],

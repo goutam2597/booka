@@ -10,15 +10,29 @@ import 'package:bookapp_customer/utils/offline_cache.dart';
 class ServicesNetworkService {
   /// Existing typed method
   Future<ServicesDataModel> getServices() async {
-    final response = await http.get(
-      Uri.parse(Urls.servicesUrl),
-      headers: HttpHeadersHelper.base(),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(Urls.servicesUrl),
+        headers: HttpHeadersHelper.base(),
+      );
 
-    if (response.statusCode == 200) {
-      return ServicesDataModel.fromJson(jsonDecode(response.body)['data']);
-    } else {
+      if (response.statusCode == 200) {
+        return ServicesDataModel.fromJson(jsonDecode(response.body)['data']);
+      }
+      // Non-200: fallback to cached root if available
+      final cached = await OfflineCache.getJson('services_root');
+      if (cached != null) {
+        final data = (cached['data'] as Map<String, dynamic>?);
+        if (data != null) return ServicesDataModel.fromJson(data);
+      }
       throw Exception('Failed to load services');
+    } catch (_) {
+      final cached = await OfflineCache.getJson('services_root');
+      if (cached != null) {
+        final data = (cached['data'] as Map<String, dynamic>?);
+        if (data != null) return ServicesDataModel.fromJson(data);
+      }
+      rethrow;
     }
   }
 
